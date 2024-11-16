@@ -275,3 +275,130 @@
     - **z** (数字)：Z 坐标（高度），单位：米。
 
 
+# 上行数据协议定义
+
+## 目录
+
+- 上行数据协议（设备到服务器）
+  1. 设备注册协议
+  2. 定位数据、状态、电量上报协议
+  3. 紧急预警数据上报协议
+  4. 业务通知数据上报协议
+
+---
+
+## 上行数据协议（设备到服务器）
+
+### 1. 设备注册协议
+
+**用途**：设备启动后向服务器注册，告知服务器其基本信息和当前状态。
+
+**Json 示例**：
+```json
+{
+  "cmd": "register",
+  "device_id": "robot123",
+  "mac_address": "00:1A:2B:3C:4D:5E",
+  "firmware_version": "1.0.3",
+  "ip_address": "192.168.1.100",
+  "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArwL0...",
+  "location": "Building A, Floor 1",
+  "timestamp": 1736966400
+}
+```
+
+**字段说明**：
+- **cmd** (字符串)：指令类型，取值为 "register"（注册）。
+- **device_id** (字符串)：设备唯一标识符。
+- **mac_address** (字符串)：设备的 MAC 地址。
+- **firmware_version** (字符串)：设备固件版本。
+- **ip_address** (字符串)：设备的 IP 地址。
+- **public_key** (字符串)：设备的公钥，用于后续加密通信。
+- **location** (字符串)：设备位置描述。
+- **timestamp** (数字)：时间戳，表示注册信息的生成时间（Unix 时间戳，秒为单位）。
+
+### 2. 定位数据、状态、电量上报协议
+
+**用途**：设备定期向服务器上报其当前定位数据、运行状态和电量信息，帮助服务器监控设备运行情况。
+
+**Json 示例**：
+```json
+{
+  "cmd": "position_status_report",
+  "device_id": "robot123",
+  "timestamp": 1736968500,
+  "location": {
+    "x": 15.0,
+    "y": 30.0,
+    "z": 0.0
+  },
+  "status": "idle",
+  "battery_level": 85
+}
+```
+
+**字段说明**：
+- **cmd** (字符串)：指令类型，取值为 "position_status_report"（定位、状态、电量上报）。
+- **device_id** (字符串)：设备唯一标识符。
+- **timestamp** (数字)：时间戳，表示上报信息的生成时间（Unix 时间戳，秒为单位）。
+- **location** (对象)：设备当前位置，包含以下字段：
+  - **x** (数字)：X 坐标，单位：米。
+  - **y** (数字)：Y 坐标，单位：米。
+  - **z** (数字)：Z 坐标（高度），单位：米。
+- **status** (字符串)：设备当前状态，例如 "idle"（空闲）、"busy"（忙碌）等。
+- **battery_level** (数字)：设备当前电池电量百分比。
+
+### 3. 紧急预警数据上报协议
+
+**用途**：当设备检测到紧急情况时，向服务器上报预警数据，以便及时处理。
+
+**Json 示例**：
+```json
+{
+  "cmd": "emergency_alert",
+  "device_id": "robot123",
+  "timestamp": 1736970000,
+  "alert_type": "obstacle_detected",
+  "severity": "high",
+  "location": {
+    "x": 20.0,
+    "y": 40.0,
+    "z": 0.0
+  }
+}
+```
+
+**字段说明**：
+- **cmd** (字符串)：指令类型，取值为 "emergency_alert"（紧急预警）。
+- **device_id** (字符串)：设备唯一标识符。
+- **timestamp** (数字)：时间戳，表示预警信息的生成时间（Unix 时间戳，秒为单位）。
+- **alert_type** (字符串)：预警类型，例如 "obstacle_detected"（检测到障碍物）。
+- **severity** (字符串)：预警严重程度，例如 "low"（低）、"medium"（中）、"high"（高）。
+- **location** (对象)：预警发生的位置，包含以下字段：
+  - **x** (数字)：X 坐标，单位：米。
+  - **y** (数字)：Y 坐标，单位：米。
+  - **z** (数字)：Z 坐标（高度），单位：米。
+
+### 4. 业务通知数据上报协议
+
+**用途**：设备向服务器上报业务相关的通知数据，用于业务流程的处理和跟踪。
+
+**Json 示例**：
+```json
+{
+  "cmd": "business_notification",
+  "device_id": "robot123",
+  "timestamp": 1736971200,
+  "notification_type": "task_completed",
+  "task_id": "task789",
+  "details": "任务已完成，返回基站。"
+}
+```
+
+**字段说明**：
+- **cmd** (字符串)：指令类型，取值为 "business_notification"（业务通知）。
+- **device_id** (字符串)：设备唯一标识符。
+- **timestamp** (数字)：时间戳，表示通知信息的生成时间（Unix 时间戳，秒为单位）。
+- **notification_type** (字符串)：通知类型，例如 "task_completed"（任务完成）。
+- **task_id** (字符串)：相关任务的唯一标识符。
+- **details** (字符串)：通知的详细描述。
