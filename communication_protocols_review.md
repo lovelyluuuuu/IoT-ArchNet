@@ -302,7 +302,14 @@
   "firmware_version": "1.0.3",
   "ip_address": "192.168.1.100",
   "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArwL0...",
-  "location": "Building A, Floor 1",
+  "location": {
+    "area_type": "indoor",
+    "build_id": "building001",
+    "floor_id": "floor001",
+    "x": 15.0,
+    "y": 30.0,
+    "z": 0.0
+  },
   "timestamp": 1736966400
 }
 ```
@@ -314,7 +321,13 @@
 - **firmware_version** (字符串)：设备固件版本。
 - **ip_address** (字符串)：设备的 IP 地址。
 - **public_key** (字符串)：设备的公钥，用于后续加密通信。
-- **location** (字符串)：设备位置描述。
+- **location** (对象)：设备位置，包含以下字段：
+  - **area_type** (字符串)：区域类型，取值为 "indoor"（室内）或 "outdoor"（室外）。
+  - **build_id** (字符串)：建筑物唯一标识符（仅适用于室内）。
+  - **floor_id** (字符串)：楼层唯一标识符（仅适用于室内）。
+  - **x** (数字)：X 坐标，单位：米。
+  - **y** (数字)：Y 坐标，单位：米。
+  - **z** (数字)：Z 坐标（高度），单位：米。
 - **timestamp** (数字)：时间戳，表示注册信息的生成时间（Unix 时间戳，秒为单位）。
 
 ### 2. 定位数据、状态、电量上报协议
