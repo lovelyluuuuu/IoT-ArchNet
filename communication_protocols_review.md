@@ -110,7 +110,6 @@
     {
       "danger_zone_id": "zone_001",
       "area_type": "indoor",
-      "level": "high",
       "build_id": "building001",
       "floor_id": "floor001",
       "point_list": [
@@ -122,14 +121,12 @@
     {
       "danger_zone_id": "zone_002",
       "area_type": "outdoor",
-      "level": "medium",
       "build_id": null,
       "floor_id": null,
       // 经纬度
-      "point_list": [
-        [100.0, 200.0],
-        [150.0, 250.0],
-        [200.0, 200.0]
+      "points": [
+        { "latitude": 37.7749, "longitude": -122.4194 },
+        { "latitude": 37.7750, "longitude": -122.4195 }
       ]
     }
   ]
@@ -158,7 +155,6 @@
 
     *   **area\_type** (字符串)：区域类型，用于区分区域位置类型，可取值为 "indoor"（室内）或 "outdoor"（户外）。
 
-    *   **level** (字符串)：危险等级（ "high"、"medium"、"low"）。
 
     *   **build\_id** (字符串 | null)：建筑物唯一标识符。对于户外区域，此字段为 null。
 
@@ -256,14 +252,6 @@
 
 *   **timestamp** (数字)：时间戳，表示报警信息的生成时间。
 
-*   **location** (对象)：报警发生的位置，包含以下字段：
-
-    *   **x** (数字)：X 坐标，单位：米。
-
-    *   **y** (数字)：Y 坐标，单位：米。
-
-    *   **z** (数字)：Z 坐标（高度），单位：米。
-
 *   **message** (字符串)：机器人进行语音报警。鸣笛则为null
 
     *   **Voice Alert**：若为语音报警，为预定义语音文本库，例如："电池电量低，请尽快充电。"
@@ -341,7 +329,6 @@
 
         *   **y** (数字)：Y 坐标，单位：米。
 
-        *   **z** (数字)：Z 坐标（高度），单位：米。
 
 ### 6. 响应注册协议
 
@@ -390,9 +377,6 @@
     "floor_id": null,
     "x": null,
     "y": null,
-    "z": null,
-    "beacons": null,
-    "anchors": null
   },
   "timestamp": 1736966400
 }
@@ -414,16 +398,6 @@
   - **floor_id** (字符串 | null)：楼层唯一标识符（仅适用于室内）。
   - **x** (浮点数 | null)：X 坐标，仅适用于室内，单位：米。
   - **y** (浮点数 | null)：Y 坐标，仅适用于室内，单位：米。
-  - **z** (浮点数 | null)：Z 坐标（高度），单位：米。
-  - **beacons** (数组 | null)：信标列表，适用于室内定位，包含以下字段：
-    - **uuid** (字符串)：信标的唯一标识符。
-    - **rssi** (整数)：信号强度，单位：dBm。
-    - **distance** (浮点数)：到信标的距离，单位：米。
-  - **anchors** (数组 | null)：锚点列表，适用于室内定位，包含以下字段：
-    - **id** (字符串)：锚点的唯一标识符。
-    - **distance** (浮点数)：到锚点的距离，单位：米。
-    - **azimuth** (浮点数)：与锚点的方位角，单位：度。
-    - **elevation** (浮点数)：与锚点的仰角，单位：度。
 - **timestamp** (数字)：时间戳，表示注册信息的生成时间（Unix 时间戳，秒为单位）。
 
 
@@ -452,12 +426,13 @@
     "floor_id": null,
     "x": null,
     "y": null,
-    "z": null,
-    "beacons": null,
-    "anchors": null
   },
   "status": 0,
-  "battery_level": 85
+  "battery": {
+    "energy": 85,
+    "voltage": 24.5,
+    "current": 1.2
+  }
 }
 // 户内定位
 {
@@ -472,22 +447,6 @@
     "floor_id": "floor_02",
     "x": 12.5,
     "y": 8.3,
-    "z": 1.5,
-    "beacons": [
-      {
-        "uuid": "123e4567-e89b-12d3-a456-426614174000",
-        "rssi": -70,
-        "distance": 2.5
-      }
-    ],
-    "anchors": [
-      {
-        "id": "anchor_001",
-        "distance": 3.2,
-        "azimuth": 45.0,
-        "elevation": 15.0
-      }
-    ]
   },
   "status": 0,
   "battery": {
@@ -533,25 +492,9 @@
 
         *   floor\_id (字符串)：楼层标识。
 
-        *   x、y、z (浮点数)：室内三维坐标，单位：米。
+        *   x、y(浮点数)：室内坐标，单位：米。
 
-        *   beacons (数组)：信标数据，数组元素结构如下：
 
-            *   uuid (字符串)：信标的唯一标识。
-
-            *   rssi (整数)：信号强度，单位：dBm。
-
-            *   distance (浮点数)：到信标的距离，单位：米。
-
-        *   anchors (数组)：锚点数据，数组元素结构如下：
-
-            *   id (字符串)：锚点的唯一标识。
-
-            *   distance (浮点数)：到锚点的距离，单位：米。
-
-            *   azimuth (浮点数)：与锚点的方位角，单位：度。
-
-            *   elevation (浮点数)：与锚点的仰角，单位：度。
 
 *   **电量字段** (battery)
 
@@ -581,10 +524,7 @@
     "build_id": null,
     "floor_id": null,
     "x": null, 
-    "y": null,                 
-    "z": null,                   
-    "beacons": null,
-    "anchors": null
+    "y": null,                                  
   },
   "error_code": null,
   "danger_zone_id": null,
