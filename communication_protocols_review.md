@@ -93,7 +93,6 @@
 
         *   **image\_base64** (字符串)：图纸的 Base64 编码（可选）。
 
-**// 问题？整个户外区域图纸信息是否下发，什么时候下发？**
 
 ### 2. 下发危险区域协议
 
@@ -159,7 +158,7 @@
 
     *   **area\_type** (字符串)：区域类型，用于区分区域位置类型，可取值为 "indoor"（室内）或 "outdoor"（户外）。
 
-    *   **level** (字符串)：危险等级（例如 "high"、"medium"、"low"）。
+    *   **level** (字符串)：危险等级（ "high"、"medium"、"low"）。
 
     *   **build\_id** (字符串 | null)：建筑物唯一标识符。对于户外区域，此字段为 null。
 
@@ -175,7 +174,7 @@
 
 **用途**：向机器人下发路径规划信息，以指导机器人在室外和建筑环境中进行导航和任务执行。
 
-后期加电梯规划信息
+
 
 **Json 示例**：
 
@@ -380,8 +379,8 @@
   "cmd": "register",
   "device_id": "robot123",
   "mac_address": "00:1A:2B:3C:4D:5E",
-  // "firmware_version": "1.0.3",
-  // "ip_address": "192.168.1.100",
+  "firmware_version": "1.0.3",
+  "ip_address": "192.168.1.100",
   "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArwL0...",
   "location": {
     "type": "outdoor",
@@ -401,32 +400,33 @@
 
 **字段说明**：
 
-*   **cmd** (字符串)：指令类型，取值为 "register"（注册）。
+- **cmd** (字符串)：指令类型，取值为 "register"（注册）。
+- **device_id** (字符串)：设备唯一标识符。
+- **mac_address** (字符串)：设备的 MAC 地址。
+- **firmware_version** (字符串)：设备固件版本。
+- **ip_address** (字符串)：设备的 IP 地址。
+- **public_key** (字符串)：设备的公钥，用于后续加密通信。
+- **location** (对象)：设备位置，包含以下字段：
+  - **type** (字符串)：区域类型，取值为 "indoor"（室内）或 "outdoor"（室外）。
+  - **latitude** (浮点数 | null)：纬度，仅适用于室外。
+  - **longitude** (浮点数 | null)：经度，仅适用于室外。
+  - **build_id** (字符串 | null)：建筑物唯一标识符（仅适用于室内）。
+  - **floor_id** (字符串 | null)：楼层唯一标识符（仅适用于室内）。
+  - **x** (浮点数 | null)：X 坐标，仅适用于室内，单位：米。
+  - **y** (浮点数 | null)：Y 坐标，仅适用于室内，单位：米。
+  - **z** (浮点数 | null)：Z 坐标（高度），单位：米。
+  - **beacons** (数组 | null)：信标列表，适用于室内定位，包含以下字段：
+    - **uuid** (字符串)：信标的唯一标识符。
+    - **rssi** (整数)：信号强度，单位：dBm。
+    - **distance** (浮点数)：到信标的距离，单位：米。
+  - **anchors** (数组 | null)：锚点列表，适用于室内定位，包含以下字段：
+    - **id** (字符串)：锚点的唯一标识符。
+    - **distance** (浮点数)：到锚点的距离，单位：米。
+    - **azimuth** (浮点数)：与锚点的方位角，单位：度。
+    - **elevation** (浮点数)：与锚点的仰角，单位：度。
+- **timestamp** (数字)：时间戳，表示注册信息的生成时间（Unix 时间戳，秒为单位）。
 
-*   **device\_id** (字符串)：设备唯一标识符。
 
-*   **mac\_address** (字符串)：设备的 MAC 地址。
-
-*   **firmware\_version** (字符串)：设备固件版本。
-
-*   **ip\_address** (字符串)：设备的 IP 地址。
-    // - **public\_key** (字符串)：设备的**公钥**，用于后续加密通信。
-
-*   **location** (对象)：设备位置，包含以下字段：
-
-    *   **area\_type** (字符串)：区域类型，取值为 "indoor"（室内）或 "outdoor"（室外）。
-
-    *   **build\_id** (字符串)：建筑物唯一标识符（仅适用于室内）。
-
-    *   **floor\_id** (字符串)：楼层唯一标识符（仅适用于室内）。
-
-    *   **x** (数字)：X 坐标，单位：米。
-
-    *   **y** (数字)：Y 坐标，单位：米。
-
-    *   **z** (数字)：Z 坐标（高度），单位：米。
-
-*   **timestamp** (数字)：时间戳，表示注册信息的生成时间（Unix 时间戳，秒为单位）。
 
 ![公私钥交互活动图](https://github.com/lovelyluuuuu/IoT-ArchNet/raw/main/%E5%85%AC%E7%A7%81%E9%92%A5%E4%BA%A4%E4%BA%92%E6%B4%BB%E5%8A%A8%E5%9B%BE.png)
 
