@@ -49,7 +49,7 @@
           "name": "一层",
           "height": 3.5,
           "image": "http://example.com/floor1.png",
-          "image_base64": null
+          //"image_base64": null
         }
       ]
     }
@@ -217,7 +217,7 @@
 
     *   **area\_type** (字符串)：区域类型，取值为 "outdoor"（室外）。
 
-    *   **points** (数组)：路径点列表（户外+户内），每个路径点包含：
+    *   **points** (数组)：路径点列表（户外+户内）
 
 ### 4. 下发报警信息协议
 
@@ -309,12 +309,11 @@
 
     *   **points** (数组)：路径点列表，每个路径点包含：
 
-        *   **x** (数字)：X 坐标，单位：米。
+        *   **x** (数字)：经度坐标。
 
-        *   **y** (数字)：Y 坐标，单位：米。
+        *   **y** (数字)：纬度坐标。
 
-        *   **z** (数字)：Z 坐标（高度），单位：米。
-
+        
 *   **indoor\_route** (数组)：室内路径规划信息，包含以下字段：
 
     *   **area\_type** (字符串)：区域类型，取值为 "indoor"（室内）。
@@ -366,7 +365,6 @@
   "cmd": "register",
   "device_id": "robot123",
   "mac_address": "00:1A:2B:3C:4D:5E",
-  "firmware_version": "1.0.3",
   "ip_address": "192.168.1.100",
   "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArwL0...",
   "location": {
@@ -387,7 +385,6 @@
 - **cmd** (字符串)：指令类型，取值为 "register"（注册）。
 - **device_id** (字符串)：设备唯一标识符。
 - **mac_address** (字符串)：设备的 MAC 地址。
-- **firmware_version** (字符串)：设备固件版本。
 - **ip_address** (字符串)：设备的 IP 地址。
 - **public_key** (字符串)：设备的公钥，用于后续加密通信。
 - **location** (对象)：设备位置，包含以下字段：
