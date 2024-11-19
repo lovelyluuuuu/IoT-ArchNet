@@ -1,8 +1,8 @@
-# 修改后的通信协议定义
+# 通信协议定义
 
 ## 目录
 
-1. 下行数据协议（服务器到设备）
+1. 下行数据协议
 
    1. 下发图纸信息协议
 
@@ -14,14 +14,13 @@
 
    5. 下发送电信息协议
 
-   6. 相应注册协议
+2. 上行数据协议
 
-2. 上行数据协议（设备到服务器）
+   1. 定位数据、状态、电量上报协议
 
-   1. 设备注册协议
-   2. 定位数据、状态、电量上报协议
-   3. 紧急预警数据上报协议
-   4. 业务通知数据上报协议
+   2. 紧急预警数据上报协议
+
+   3. 业务通知数据上报协议
 
 ---
 
@@ -240,83 +239,15 @@
   - **area\_type** (字符串)：区域类型，取值为 "outdoor" 或 "indoor"。
   - **points** (数组)：路径点列表，每个路径点为 [x, y] 坐标对。
 
-### 6. 响应注册协议
-
-**用途**：当设备注册请求被接受后，服务器会下发其公钥以供设备使用。
-
-```json
-{
-  "cmd": "server_public_key",
-  "device_id": "robot123",
-  "server_public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArwL1...",
-  "timestamp": 1736966500
-}
-```
-
-**字段说明**：
-
-- **cmd** (字符串)：指令类型，取值为 "server\_public\_key"（服务器公钥下发）。
-- **device\_id** (字符串)：目标设备唯一标识符。
-- **server\_public\_key** (字符串)：服务器的公钥，用于设备后续上行数据加密。
-- **timestamp** (数字)：时间戳，表示公钥下发时间。
-
 ## 上行数据协议
 
-### 1. 设备注册协议
-
-**用途**：设备启动后向服务器注册，告知服务器其基本信息和当前状态。
-
-**Json 示例**：
-
-```json
-{
-  "cmd": "register",
-  "device_id": "robot123",
-  "mac_address": "00:1A:2B:3C:4D:5E",
-  "ip_address": "192.168.1.100",
-  "public_key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArwL0...",
-  "location": {
-    "type": "outdoor",
-    "latitude": 37.7749,
-    "longitude": -122.4194,
-    "build_id": null,
-    "floor_id": null,
-    "x": null,
-    "y": null,
-    "building_info": 1,
-    "floor_info": 1234
-  },
-  "timestamp": 1736966400
-}
-```
-
-**字段说明**：
-
-- **cmd** (字符串)：指令类型，取值为 "register"（注册）。
-- **device\_id** (字符串)：设备唯一标识符。
-- **mac\_address** (字符串)：设备的 MAC 地址。
-- **ip\_address** (字符串)：设备的 IP 地址。
-- **public\_key** (字符串)：设备的公钥，用于后续加密通信。
-- **location** (对象)：设备位置，包含以下字段：
-  - **type** (字符串)：区域类型，取值为 "indoor"（室内）或 "outdoor"（室外）。
-  - **latitude** (浮点数 | null)：纬度，仅适用于室外。
-  - **longitude** (浮点数 | null)：经度，仅适用于室外。
-  - **build\_id** (字符串 | null)：建筑物唯一标识符（仅适用于室内）。
-  - **floor\_id** (字符串 | null)：楼层唯一标识符（仅适用于室内）。
-  - **x** (浮点数 | null)：X 坐标，仅适用于室内，单位为米。
-  - **y** (浮点数 | null)：Y 坐标，仅适用于室内，单位为米。
-  - **building\_info** (整数)：楼栋信息，用工作面编号指代，1个字节。
-  - **floor\_info** (整数)：楼层信息，由定位设备通过无线测量得到，4个字节。
-- **timestamp** (数字)：时间戳，表示注册信息的生成时间。
-
-### 2. 定位数据、状态、电量上报协议
+### 1. 定位数据、状态、电量上报协议
 
 **用途**：设备定期向服务器上报其当前定位数据、运行状态和电量信息，帮助服务器监控设备运行情况。
 
 **Json 示例**：
 
 ```json
-
 {
   "cmd": "status_report",
   "device_id": "robot123",
@@ -325,20 +256,28 @@
     "type": "indoor",
     "latitude": null,
     "longitude": null,
-    "build_id": "building_01",
-    "floor_id": "floor_02",
+    "area_id": 3,
     "building_info": 2,
     "floor_info": 4321,
+    "x": 12.5,
+    "y": 8.3,
+    "z": 0,
+    "satellite_count": null,
+    "hdop": 0.8,
+    "gnss_speed": 1.2,
+    "barometer": -9999,
     "beacons": [
       {
-        "uuid": "123e4567-e89b-12d3-a456-426614174000",
+        "major": 1234,
+        "minor": 5678,
         "rssi": -70,
         "distance": 2.5
       }
     ],
     "anchors": [
       {
-        "id": "anchor_001",
+        "major": 4321,
+        "minor": 8765,
         "distance": 3.2,
         "azimuth": 45.0,
         "elevation": 15.0
@@ -368,44 +307,49 @@
 
 **字段说明**：
 
-- **cmd** (字符串)：指令类型，取值为 "status\_report"（定位、状态、电量上报）。
-- **device\_id** (字符串)：设备唯一标识符。
+- **cmd** (字符串)：指令类型，取值为 "status_report"（状态上报）。
+- **device_id** (字符串)：设备唯一标识符。
 - **timestamp** (数字)：时间戳，表示上报信息的生成时间（Unix 时间戳，秒为单位）。
+- **location** (对象)：设备位置数据。
+  - **type** (字符串)：定位类型，取值为 "outdoor" 或 "indoor"。
+  - **latitude** (浮点数 | null)：纬度，仅适用于室外。
+  - **longitude** (浮点数 | null)：经度，仅适用于室外。
+  - **area_id** (16进制整数)：工作面编号。
+  - **building_info** (整数 | null)：楼栋信息。
+  - **floor_info** (整数 | null)：楼层信息。
+  - **x**、**y**、**z** (浮点数)：室内坐标，单位为米，仅适用于室内。
+  - **satellite_count** (整数 | null)：可见卫星数量，仅适用于室外。
+  - **hdop** (浮点数)：定位精度，仅适用于室外。
+  - **gnss_speed** (浮点数)：定位速度，单位为米/秒，仅适用于室外。
+  - **barometer** (整数):高度，卫星定位获得的相对参考地面的高度，无效用小于-1000的值表示典型值为-9999。
+  - **beacons** (数组)：信标数据。
+    - **major** (16进制整数)：信标的 major 标识符。
+    - **minor** (整数)：信标的 minor 标识符。
+    - **rssi** (整数)：信号强度，单位为 dBm。
+    - **distance** (浮点数)：到信标的距离，单位为米。
+  - **anchors** (数组)：锚点数据。
+    - **major** (整数)：锚点的 major 标识符。
+    - **minor** (整数)：锚点的 minor 标识符。
+    - **distance** (浮点数)：到锚点的距离，单位为米。
+    - **azimuth** (浮点数)：与锚点的方位角，单位为度。
+    - **elevation** (浮点数)：与锚点的仰角，单位为度。
 - **status** (整数型)：设备当前状态。
   - **0** - 离线
   - **1** - 故障
   - **2** - 在线（工作）
   - **3** - 在线（闲置）
-- **定位字段** (location)：设备位置数据。
-  - **type** (字符串)：定位类型，取值为 "outdoor" 或 "indoor"。
-  - **latitude** (浮点数 | null)：纬度，仅适用于室外。
-  - **longitude** (浮点数 | null)：经度，仅适用于室外。
-  - **build\_id** (字符串 | null)：建筑物唯一标识，仅适用于室内。
-  - **floor\_id** (字符串 | null)：楼层标识，仅适用于室内。
-  - **x**、**y** (浮点数)：室内坐标，单位为米，仅适用于室内。
-  - **building\_info** (整数)：楼栋信息。
-  - **floor\_info** (整数)：楼层信息。
-  - **beacons** (数组)：信标数据。
-    - **uuid** (字符串)：信标的唯一标识。
-    - **rssi** (整数)：信号强度，单位为 dBm。
-    - **distance** (浮点数)：到信标的距离，单位为米。
-  - **anchors** (数组)：锚点数据。
-    - **id** (字符串)：锚点的唯一标识。
-    - **distance** (浮点数)：到锚点的距离，单位为米。
-    - **azimuth** (浮点数)：与锚点的方位角，单位为度。
-    - **elevation** (浮点数)：与锚点的仰角，单位为度。
 - **battery** (对象)：电量数据。
-  - **energy** (整数)：电池电量百分比，取值范围为 0 \~ 100。
+  - **energy** (整数)：电池电量百分比，取值范围为 0 ~ 100。
   - **voltage** (浮点数)：电池电压，单位为伏特。
   - **current** (浮点数)：电池电流，单位为安培。
-- **nearby\_people** (数组)：周边人员信息。
+- **nearby_people** (数组)：周边人员信息。
   - **id** (字符串)：人员唯一标识。
   - **distance** (浮点数)：与设备之间的距离，单位为米。
-- **nearby\_robots** (数组)：周边机器人信息。
-  - **device\_id** (字符串)：机器人唯一标识。
-  - **signal\_strength** (整数)：蓝牙信号强度，单位为 dBm。
+- **nearby_robots** (数组)：周边机器人信息。
+  - **device_id** (字符串)：机器人唯一标识。
+  - **signal_strength** (整数)：蓝牙信号强度，单位为 dBm。
 
-### 3. 紧急预警数据上报协议
+### 2. 紧急预警数据上报协议
 
 **用途**：当设备检测到紧急情况时，向服务器上报预警数据，以便及时处理。
 
@@ -442,13 +386,15 @@
   - **battery\_low**：电池电量低。
   - **equipment\_fault**：设备故障。
   - **intrusion\_detected**：闯入禁区。
+  - **fall_protection**：防跌落
+  - **proximity_alert**：人员距离设备过近
 - **severity** (字符串)：预警严重程度，例如 "low"（低）、"medium"（中）、"high"（高）。
 - **location** (对象)：预警发生的位置。
 - **error\_code** (字符串 | null)：错误代码，仅适用于设备故障。
 - **danger\_zone\_id** (字符串 | null)：危险区域唯一标识，仅适用于禁区闯入。
 - **message** (字符串)：预警的详细描述。
 
-### 4. 业务通知数据上报协议
+### 3. 业务通知数据上报协议
 
 **用途**：设备向服务器上报业务相关的通知数据，用于业务流程的处理和跟踪。
 
