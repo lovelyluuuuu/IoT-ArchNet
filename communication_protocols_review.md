@@ -134,6 +134,8 @@
   "route": [
     {
       "area_type": "outdoor",
+      "build_id": null,
+      "floor_id": null,
       "points": [
         [37.7749, -122.4194],
         [37.7750, -122.4195]
@@ -194,7 +196,7 @@
 - **timestamp** (数字)：时间戳，表示报警信息的生成时间。
 - **message** (字符串)：机器人进行语音报警。
 
-**待解决问题**：明确哪些情况需要触发报警以及何时触发，需结合具体业务逻辑。
+
 
 ### 5. 下发充电指令协议
 
@@ -211,6 +213,8 @@
   "route": [
     {
       "area_type": "outdoor",
+      "build_id": null,
+      "floor_id": null,
       "points": [
         [37.7749, -122.4194],
         [37.7750, -122.4195]
@@ -363,13 +367,36 @@
   "alert_type": "battery_low",
   "severity": "high",
   "location": {
-    "type": "outdoor",
-    "latitude": 37.7749,
-    "longitude": -122.4194,
-    "build_id": null,
-    "floor_id": null,
-    "x": null,
-    "y": null                                  
+    "type": "indoor",
+    "latitude": null,
+    "longitude": null,
+    "area_id": 3,
+    "building_info": 2,
+    "floor_info": 4321,
+    "x": 12.5,
+    "y": 8.3,
+    "z": 0,
+    "satellite_count": null,
+    "hdop": 0.8,
+    "gnss_speed": 1.2,
+    "barometer": -9999,
+    "beacons": [
+      {
+        "major": 1234,
+        "minor": 5678,
+        "rssi": -70,
+        "distance": 2.5
+      }
+    ],
+    "anchors": [
+      {
+        "major": 4321,
+        "minor": 8765,
+        "distance": 3.2,
+        "azimuth": 45.0,
+        "elevation": 15.0
+      }
+    ]
   },
   "error_code": null,
   "danger_zone_id": null,
@@ -389,7 +416,7 @@
   - **fall_protection**：防跌落
   - **proximity_alert**：人员距离设备过近
 - **severity** (字符串)：预警严重程度，例如 "low"（低）、"medium"（中）、"high"（高）。
-- **location** (对象)：预警发生的位置。
+- **location** (对象)：预警发生的位置，字段同定位数据上报。
 - **error\_code** (字符串 | null)：错误代码，仅适用于设备故障。
 - **danger\_zone\_id** (字符串 | null)：危险区域唯一标识，仅适用于禁区闯入。
 - **message** (字符串)：预警的详细描述。
